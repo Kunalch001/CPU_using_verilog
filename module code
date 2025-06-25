@@ -1,0 +1,63 @@
+module CUmodule(
+    input [3:0] Opcode,
+    input [3:0] a,
+    input [3:0] b,
+    input [3:0] t,
+    input [3:0] d,
+    input [7:0] data_in,
+    input read_enable,
+    input write_enable,
+    output reg [7:0] storage,
+    output reg [7:0] c
+);
+
+reg [7:0] mem [0:15];
+reg [7:0] data_out;
+wire [3:0] addr = d;
+
+initial begin
+    $display("Write the value of OPCODE according to which your task will be performed:");
+    $display("OPCODE = 1 for ALU");
+    $display("OPCODE = 2 for register");
+    $display("OPCODE = 3 for write");
+    $display("OPCODE = 4 for read");
+end
+
+always @(*) begin
+    case (Opcode)
+        4'b0001: begin
+            case (t)
+                4'b0001: c = a + b;
+                4'b0010: c = (a > b) ? (a - b) : (b - a);
+                4'b0011: c = a * b;
+                4'b0100: if (b != 0) c = a / b;
+                default: c = 0;
+            endcase
+        end
+
+        4'b0010: begin
+            storage = c;
+            $display("Result stored in register: %d", storage);
+        end
+
+        4'b0011: begin
+            if (write_enable) begin
+                mem[addr] = data_in;
+                $display("Value %d written to memory address %d", data_in, addr);
+            end
+        end
+
+        4'b0100: begin
+            if (read_enable) begin
+                data_out = mem[addr];
+                $display("Value read from memory address %d is %d", addr, data_out);
+            end
+        end
+
+        default: begin
+            $display("Invalid Opcode");
+        end
+    endcase
+end
+
+endmodule
