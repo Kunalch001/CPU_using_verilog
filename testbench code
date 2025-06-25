@@ -1,0 +1,49 @@
+module CUmodule_tb;
+
+reg [3:0] Opcode;
+reg [3:0] a, b, t;
+reg [3:0] d;
+reg [7:0] data_in;
+reg read_enable, write_enable;
+wire [7:0] storage;
+wire [7:0] c;
+wire [7:0] mem [0:15];
+
+CUmodule uut (
+    .Opcode(Opcode),
+    .a(a),
+    .b(b),
+    .t(t),
+    .storage(storage),
+    .c(c),
+    .d(d),
+    .data_in(data_in),
+    .read_enable(read_enable),
+    .write_enable(write_enable),
+    .mem(mem)
+);
+
+initial begin
+    Opcode = 4'b0001;
+    a = 4'd6;
+    b = 4'd3;
+    t = 4'b0001;
+    #10;
+
+    Opcode = 4'b0010;
+    #10;
+
+    Opcode = 4'b0011;
+    d = 4'd2;
+    data_in = 8'd50;
+    write_enable = 1;
+    #10;
+
+    Opcode = 4'b0100;
+    read_enable = 1;
+    #10;
+
+    $finish;
+end
+
+endmodule
